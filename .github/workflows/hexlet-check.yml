@@ -8,17 +8,33 @@ name: hexlet-check
 on:
   push:
     branches:
-      - '**'
-    tags:
-      - '**'
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: Hexlet project check
-        uses: hexlet/project-action@release
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
-          hexlet-id: ${{ secrets.HEXLET_ID }}
+          node-version: "14"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Run linter
+        run: npm run lint
+
+      - run: make install
+      - run: make lint
+      - run: make test

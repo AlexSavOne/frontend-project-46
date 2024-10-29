@@ -1,23 +1,23 @@
 import _ from 'lodash';
 
-const genDiff = (data1, data2) => {
+const diffGenerator = (data1, data2) => {
   const keys = _.union(Object.keys(data1), Object.keys(data2));
   const sortedKeys = _.sortBy(keys);
 
-  const differences = sortedKeys.map((key) => {
+  const differences = sortedKeys.reduce((acc, key) => {
     if (!(key in data1)) {
-      return `+ ${key}: ${data2[key]}`;
+      acc[key] = 'added';
+    } else if (!(key in data2)) {
+      acc[key] = 'deleted';
+    } else if (data1[key] !== data2[key]) {
+      acc[key] = 'changed';
+    } else {
+      acc[key] = 'unchanged';
     }
-    if (!(key in data2)) {
-      return `- ${key}: ${data1[key]}`;
-    }
-    if (data1[key] !== data2[key]) {
-      return `- ${key}: ${data1[key]}\n+ ${key}: ${data2[key]}`;
-    }
-    return null;
-  });
+    return acc;
+  }, {});
 
-  return differences.filter(Boolean).join('\n');
+  return differences;
 };
 
-export default genDiff;
+export default diffGenerator;

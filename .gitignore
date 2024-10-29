@@ -1,3 +1,6 @@
 node_modules/
 .vscode/
 demo.cast
+*.log
+coverage
+.DS_Store
