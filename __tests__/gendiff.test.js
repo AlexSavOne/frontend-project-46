@@ -2,16 +2,29 @@ import diffGenerator from '../diffGenerator.js';
 
 describe('genDiff', () => {
   it('should return correct diff for two flat JSON objects', () => {
-    const data1 = { one: 'eon', two: 'two', four: true };
-    const data2 = { two: 'own', zero: 4, four: true };
-
-    const expectedDiff = {
-      one: 'deleted',
-      two: 'changed',
-      four: 'unchanged',
-      zero: 'added',
+    const data1 = {
+      host: 'hexlet.io',
+      timeout: 50,
+      proxy: '123.234.53.22',
+      follow: false,
     };
 
-    expect(diffGenerator(data1, data2)).toEqual(expectedDiff);
+    const data2 = {
+      timeout: 20,
+      verbose: true,
+      host: 'hexlet.io',
+    };
+
+    const expectedDiff = `
+- follow: false
+- proxy: 123.234.53.22
+- timeout: 50
++ timeout: 20
++ verbose: true
+`.trim();
+
+    const result = diffGenerator(data1, data2);
+    console.log('Generated Diff:\n', result);
+    expect(result.trim()).toEqual(expectedDiff);
   });
 });

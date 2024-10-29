@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-import parseFile from './fileParser.js';
+import parseFile from './parsers/fileParser.js';
 import diffGenerator from './diffGenerator.js';
 
 const program = new Command();
