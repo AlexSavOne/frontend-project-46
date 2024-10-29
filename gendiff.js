@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import parseFile from './fileParser.js';
+import genDiff from './diffGenerator.js';
 
 const program = new Command();
 
@@ -12,9 +13,8 @@ program
   .action((filepath1, filepath2) => {
     const data1 = parseFile(filepath1);
     const data2 = parseFile(filepath2);
-    console.log(data1, data2);
+    const result = genDiff(data1, data2);
+    console.log(result);
   });
-
-
 
 program.parse(process.argv);
