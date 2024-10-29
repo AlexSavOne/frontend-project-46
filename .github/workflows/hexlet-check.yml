@@ -32,3 +32,11 @@ jobs:
       - run: make install
       - run: make lint
       - run: make test
+
+      - name: Upload coverage to Code Climate
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        run: |
+          ./cc-test-reporter before-build
+          make test-coverage
+          ./cc-test-reporter after-build --exit-code $?
