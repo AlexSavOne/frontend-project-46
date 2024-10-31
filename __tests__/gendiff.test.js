@@ -1,45 +1,112 @@
+// __tests__/gendiff.test.js
+
 import path from 'path';
-import url from 'url';
-import parseFile from '../parsers/fileParser.js';
-import diffGenerator from '../diffGenerator.js';
+import gendiff from '../gendiff.js';
 
-const __filename = url.fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const getFixturePath = (filename) => path.join('__fixtures__', filename);
 
-describe('genDiff', () => {
-  it('should return correct diff for two flat JSON files', () => {
-    const filepath1 = path.resolve(__dirname, '../__fixtures__/file1.json');
-    const filepath2 = path.resolve(__dirname, '../__fixtures__/file2.json');
+test('gendiff with JSON files in stylish format', () => {
+  const filepath1 = getFixturePath('file1.json');
+  const filepath2 = getFixturePath('file2.json');
 
-    const expectedDiff = `- follow: false
-- proxy: 123.234.53.22
-- timeout: 50
-+ timeout: 20
-+ verbose: true`.trim();
+  const expectedOutput = `{
+    common: {
+      + follow: false
+        setting1: Value 1
+      - setting2: 200
+      - setting3: true
+      + setting3: null
+      + setting4: blah blah
+      + setting5: {
+          key5: value5
+      }
+        setting6: {
+          doge: {
+            - wow:
+            + wow: so much
+          }
+          key: value
+          + ops: vops
+      }
+    }
+    group1: {
+      - baz: bas
+      + baz: bars
+        foo: bar
+      - nest: {
+          key: value
+      }
+      + nest: str
+    }
+  - group2: {
+      abc: 12345
+      deep: {
+          id: 45
+      }
+  }
+  + group3: {
+      deep: {
+          id: {
+              number: 45
+          }
+      }
+      fee: 100500
+  }
+}`;
 
-    const data1 = parseFile(filepath1);
-    const data2 = parseFile(filepath2);
-    const result = diffGenerator(data1, data2);
+  const result = gendiff(filepath1, filepath2, 'stylish');
+  expect(result).toBe(expectedOutput.trim());
+});
 
-    console.log('Generated Diff:\n', result);
-    expect(result).toEqual(expectedDiff);
-  });
+test('gendiff with YAML files in stylish format', () => {
+  const filepath1 = getFixturePath('file1.yml');
+  const filepath2 = getFixturePath('file2.yml');
 
-  it('should return correct diff for two flat YAML files', () => {
-    const filepath1 = path.resolve(__dirname, '../__fixtures__/filepath1.yml');
-    const filepath2 = path.resolve(__dirname, '../__fixtures__/filepath2.yml');
+  const expectedOutput = `{
+    common: {
+      + follow: false
+        setting1: Value 1
+      - setting2: 200
+      - setting3: true
+      + setting3: null
+      + setting4: blah blah
+      + setting5: {
+          key5: value5
+      }
+        setting6: {
+          doge: {
+            - wow:
+            + wow: so much
+          }
+          key: value
+          + ops: vops
+      }
+    }
+    group1: {
+      - baz: bas
+      + baz: bars
+        foo: bar
+      - nest: {
+          key: value
+      }
+      + nest: str
+    }
+  - group2: {
+      abc: 12345
+      deep: {
+          id: 45
+      }
+  }
+  + group3: {
+      deep: {
+          id: {
+              number: 45
+          }
+      }
+      fee: 100500
+  }
+}`;
 
-    const expectedDiff = `- follow: false
-- proxy: 123.234.53.22
-- timeout: 50
-+ timeout: 20
-+ verbose: true`.trim();
-
-    const data1 = parseFile(filepath1);
-    const data2 = parseFile(filepath2);
-    const result = diffGenerator(data1, data2);
-
-    console.log('Generated Diff:\n', result);
-    expect(result).toEqual(expectedDiff);
-  });
+  const result = gendiff(filepath1, filepath2, 'stylish');
+  expect(result).toBe(expectedOutput.trim());
 });

@@ -1,3 +1,5 @@
+// parsers\jsonParser.js
+
 import fs from 'fs';
 
 const parseJsonFile = (filePath) => {
