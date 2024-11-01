@@ -9,7 +9,7 @@
     "lint": "eslint ."
   },
   "bin": {
-    "gendiff": "./gendiff.js"
+    "gendiff": "gendiff.js"
   },
   "author": "AlexSav",
   "license": "ISC",

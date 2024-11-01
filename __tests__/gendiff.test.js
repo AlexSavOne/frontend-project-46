@@ -1,112 +1,48 @@
 // __tests__/gendiff.test.js
-
+import { fileURLToPath } from 'url';
 import path from 'path';
-import gendiff from '../gendiff.js';
+import fs from 'fs';
+import genDiff from '../src/index.js';
 
-const getFixturePath = (filename) => path.join('__fixtures__', filename);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
+const readFile = (filename) => fs.readFileSync(getFixturePath(filename), 'utf-8');
 
-test('gendiff with JSON files in stylish format', () => {
-  const filepath1 = getFixturePath('file1.json');
-  const filepath2 = getFixturePath('file2.json');
+describe('gendiff', () => {
+  const filepath1 = getFixturePath('filepath1.json');
+  const filepath2 = getFixturePath('filepath2.json');
 
-  const expectedOutput = `{
-    common: {
-      + follow: false
-        setting1: Value 1
-      - setting2: 200
-      - setting3: true
-      + setting3: null
-      + setting4: blah blah
-      + setting5: {
-          key5: value5
-      }
-        setting6: {
-          doge: {
-            - wow:
-            + wow: so much
-          }
-          key: value
-          + ops: vops
-      }
-    }
-    group1: {
-      - baz: bas
-      + baz: bars
-        foo: bar
-      - nest: {
-          key: value
-      }
-      + nest: str
-    }
-  - group2: {
-      abc: 12345
-      deep: {
-          id: 45
-      }
-  }
-  + group3: {
-      deep: {
-          id: {
-              number: 45
-          }
-      }
-      fee: 100500
-  }
-}`;
+  test('stylish format (default)', () => {
+    const expected = readFile('expected_stylish.txt');
+    expect(genDiff(filepath1, filepath2)).toBe(expected);
+  });
 
-  const result = gendiff(filepath1, filepath2, 'stylish');
-  expect(result).toBe(expectedOutput.trim());
-});
+  test('plain format', () => {
+    const expected = readFile('expected_plain.txt');
+    expect(genDiff(filepath1, filepath2, 'plain')).toBe(expected);
+  });
 
-test('gendiff with YAML files in stylish format', () => {
-  const filepath1 = getFixturePath('file1.yml');
-  const filepath2 = getFixturePath('file2.yml');
+  test('json format', () => {
+    const expected = readFile('expected_json.txt');
+    expect(genDiff(filepath1, filepath2, 'json')).toBe(expected);
+  });
 
-  const expectedOutput = `{
-    common: {
-      + follow: false
-        setting1: Value 1
-      - setting2: 200
-      - setting3: true
-      + setting3: null
-      + setting4: blah blah
-      + setting5: {
-          key5: value5
-      }
-        setting6: {
-          doge: {
-            - wow:
-            + wow: so much
-          }
-          key: value
-          + ops: vops
-      }
-    }
-    group1: {
-      - baz: bas
-      + baz: bars
-        foo: bar
-      - nest: {
-          key: value
-      }
-      + nest: str
-    }
-  - group2: {
-      abc: 12345
-      deep: {
-          id: 45
-      }
-  }
-  + group3: {
-      deep: {
-          id: {
-              number: 45
-          }
-      }
-      fee: 100500
-  }
-}`;
+  const filepath1Yaml = getFixturePath('filepath1.yml');
+  const filepath2Yaml = getFixturePath('filepath2.yml');
 
-  const result = gendiff(filepath1, filepath2, 'stylish');
-  expect(result).toBe(expectedOutput.trim());
+  test('stylish format for YAML', () => {
+    const expected = readFile('expected_stylish.txt');
+    expect(genDiff(filepath1Yaml, filepath2Yaml)).toBe(expected);
+  });
+
+  test('plain format for YAML', () => {
+    const expected = readFile('expected_plain.txt');
+    expect(genDiff(filepath1Yaml, filepath2Yaml, 'plain')).toBe(expected);
+  });
+
+  test('json format for YAML', () => {
+    const expected = readFile('expected_json.txt');
+    expect(genDiff(filepath1Yaml, filepath2Yaml, 'json')).toBe(expected);
+  });
 });

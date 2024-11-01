@@ -13,7 +13,7 @@ const formatValue = (value, level) => {
   return `{\n${entries.join('\n')}\n${indent(level)}}`;
 };
 
-const stylish = (data1, data2, level = 1) => {
+const stylishFormatter = (data1, data2, level = 1) => {
   const keys = _.union(Object.keys(data1), Object.keys(data2)).sort();
 
   const differences = keys.map((key) => {
@@ -24,7 +24,7 @@ const stylish = (data1, data2, level = 1) => {
       return `${indent(level)}- ${key}: ${formatValue(data1[key], level)}`;
     }
     if (_.isObject(data1[key]) && _.isObject(data2[key])) {
-      const childrenDiff = stylish(data1[key], data2[key], level + 1);
+      const childrenDiff = stylishFormatter(data1[key], data2[key], level + 1);
       return `${indent(level)}${key}: {\n${childrenDiff}\n${indent(level)}}`;
     }
     if (data1[key] !== data2[key]) {
@@ -36,4 +36,4 @@ const stylish = (data1, data2, level = 1) => {
   return differences.join('\n');
 };
 
-export default stylish;
+export default stylishFormatter;

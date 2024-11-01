@@ -1,21 +1,20 @@
 // formatters\index.js
 
-import stylish from './stylish.js';
-import plain from './plain.js';
-import json from './json.js';
+import stylishFormatter from './stylish.js';
+import plainFormatter from './plain.js';
+import jsonFormatter from './json.js';
 
-const formatters = {
-  stylish,
-  plain,
-  json,
-};
-
-const format = (data1, data2, formatType) => {
+function makeFormat(data, formatType = 'stylish') {
+  const formatters = {
+    stylish: stylishFormatter,
+    plain: plainFormatter,
+    json: jsonFormatter,
+  };
   const formatter = formatters[formatType];
   if (!formatter) {
     throw new Error(`Unknown format: ${formatType}`);
   }
-  return formatter(data1, data2);
-};
+  return formatter(data);
+}
 
-export default format;
+export default makeFormat;

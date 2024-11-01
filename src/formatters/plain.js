@@ -1,6 +1,6 @@
 // src/formatters/plain.js
 
-const plain = (diff) => {
+const plainFormatter = (diff) => {
   const formatValue = (value) => {
     if (value === null) return 'null';
     if (typeof value === 'object' && value !== null) return '[complex value]';
@@ -11,22 +11,28 @@ const plain = (diff) => {
     .flatMap(([key, item]) => {
       const fullPath = path.length ? `${path}.${key}` : key;
 
-      switch (item.type) {
-        case 'added':
-          return `Property '${fullPath}' was added with value: ${formatValue(item.value)}`;
-        case 'removed':
-          return `Property '${fullPath}' was removed`;
-        case 'updated':
-          return `Property '${fullPath}' was updated. From ${formatValue(item.oldValue)} to ${formatValue(item.value)}`;
-        case 'nested':
-          return iter(item.children, fullPath);
-        default:
-          return [];
+      if (item && typeof item === 'object' && !Array.isArray(item)) {
+        const { type, value, oldValue, newValue, children } = item;
+
+        switch (type) {
+          case 'added':
+            return `Property '${fullPath}' was added with value: ${formatValue(value)}`;
+          case 'removed':
+            return `Property '${fullPath}' was removed`;
+          case 'updated':
+            return `Property '${fullPath}' was updated. From ${formatValue(oldValue)} to ${formatValue(newValue)}`;
+          case 'nested':
+            return iter(children, fullPath);
+          default:
+            return [];
+        }
       }
+      return [];
     })
     .join('\n');
+
   console.log('Diff structure:', JSON.stringify(diff, null, 2));
   return iter(diff, '');
 };
 
-export default plain;
+export default plainFormatter;
