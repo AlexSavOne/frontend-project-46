@@ -2,7 +2,7 @@ import _ from 'lodash';
 import path from 'path';
 import fs from 'fs';
 
-export const getExtension = (filename) => filename.split('.').at(-1);
+export const getExtension = (filename) => filename.split('.').pop();
 
 export const readFile = (filePath) => {
   const fullPath = path.resolve(filePath);

@@ -4,3 +4,4 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/125f37e469d85032346c/maintainability)](https://codeclimate.com/github/AlexSavOne/frontend-project-46/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/125f37e469d85032346c/test_coverage)](https://codeclimate.com/github/AlexSavOne/frontend-project-46/test_coverage)
 [![asciicast](https://asciinema.org/a/07gxd3T7ITHFJMmRqgCCBcw50.svg)](https://asciinema.org/a/07gxd3T7ITHFJMmRqgCCBcw50)
+[![asciicast](https://asciinema.org/a/TZLS5UTZUnPcpeBlQxWeekhm6.svg)](https://asciinema.org/a/TZLS5UTZUnPcpeBlQxWeekhm6)
