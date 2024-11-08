@@ -23,7 +23,9 @@ export const getDifferentObject = (obj1, obj2) => {
       return { action: 'nested', key, children: getDifferentObject(oldValue, newValue) };
     }
     if (oldValue !== newValue) {
-      return { action: 'changed', key, oldValue, newValue };
+      return {
+        action: 'changed', key, oldValue, newValue,
+      };
     }
     return { action: 'unchanged', key, oldValue };
   });

@@ -10,7 +10,6 @@ function genDiff(filepath1, filepath2, format = 'stylish') {
   const parseFile1 = parseFile(dataFile1, extension1);
   const parseFile2 = parseFile(dataFile2, extension2);
   const dataDiff = getDifferentObject(parseFile1, parseFile2);
-  console.log('Using format:', format);
   const result = makeFormat(dataDiff, format);
   return result;
 }

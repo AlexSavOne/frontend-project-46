@@ -14,6 +14,9 @@ const tests = [
   ['filepath1.json', 'filepath2.json', 'expected_stylish.txt', 'stylish'],
   ['filepath1.json', 'filepath2.json', 'expected_plain.txt', 'plain'],
   ['filepath1.json', 'filepath2.json', 'expected_json.txt', 'json'],
+  ['filepath1.yml', 'filepath2.yml', 'expected_stylish.txt', 'stylish'],
+  ['filepath1.yml', 'filepath2.yml', 'expected_plain.txt', 'plain'],
+  ['filepath1.yml', 'filepath2.yml', 'expected_json.txt', 'json'],
 ];
 
 describe.each(tests)('Compare data', (data1, data2, expectedResult, format) => {
