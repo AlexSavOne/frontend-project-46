@@ -1,5 +1,3 @@
-// src\index.js
-
 import makeFormat from './formatters/index.js';
 import { getDifferentObject, readFile, getExtension } from './diffBuilder.js';
 import parseFile from './parsers/fileParser.js';

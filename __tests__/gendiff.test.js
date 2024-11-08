@@ -1,48 +1,27 @@
-// __tests__/gendiff.test.js
+import { test, expect, describe } from '@jest/globals';
 import { fileURLToPath } from 'url';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
 import genDiff from '../src/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
 const readFile = (filename) => fs.readFileSync(getFixturePath(filename), 'utf-8');
 
-describe('gendiff', () => {
-  const filepath1 = getFixturePath('filepath1.json');
-  const filepath2 = getFixturePath('filepath2.json');
+const tests = [
+  ['filepath1.json', 'filepath2.json', 'expected_stylish.txt', 'stylish'],
+  ['filepath1.json', 'filepath2.json', 'expected_plain.txt', 'plain'],
+  ['filepath1.json', 'filepath2.json', 'expected_json.txt', 'json'],
+];
 
-  test('stylish format (default)', () => {
-    const expected = readFile('expected_stylish.txt');
-    expect(genDiff(filepath1, filepath2)).toBe(expected);
-  });
-
-  test('plain format', () => {
-    const expected = readFile('expected_plain.txt');
-    expect(genDiff(filepath1, filepath2, 'plain')).toBe(expected);
-  });
-
-  test('json format', () => {
-    const expected = readFile('expected_json.txt');
-    expect(genDiff(filepath1, filepath2, 'json')).toBe(expected);
-  });
-
-  const filepath1Yaml = getFixturePath('filepath1.yml');
-  const filepath2Yaml = getFixturePath('filepath2.yml');
-
-  test('stylish format for YAML', () => {
-    const expected = readFile('expected_stylish.txt');
-    expect(genDiff(filepath1Yaml, filepath2Yaml)).toBe(expected);
-  });
-
-  test('plain format for YAML', () => {
-    const expected = readFile('expected_plain.txt');
-    expect(genDiff(filepath1Yaml, filepath2Yaml, 'plain')).toBe(expected);
-  });
-
-  test('json format for YAML', () => {
-    const expected = readFile('expected_json.txt');
-    expect(genDiff(filepath1Yaml, filepath2Yaml, 'json')).toBe(expected);
+describe.each(tests)('Compare data', (data1, data2, expectedResult, format) => {
+  const firstData = getFixturePath(data1);
+  const secondData = getFixturePath(data2);
+  const finalResult = genDiff(firstData, secondData, format);
+  const expectedOutcome = readFile(expectedResult);
+  test(`test ${data1} and ${data2} with ${format} format to ${expectedResult}`, () => {
+    expect(finalResult.trim()).toBe(expectedOutcome.trim());
   });
 });

@@ -1,5 +1,3 @@
-// formatters\index.js
-
 import stylishFormatter from './stylish.js';
 import plainFormatter from './plain.js';
 import jsonFormatter from './json.js';

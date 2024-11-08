@@ -1,39 +1,51 @@
-// formatters\stylish.js
-
 import _ from 'lodash';
 
-const indent = (level) => '    '.repeat(level);
-
-const formatValue = (value, level) => {
-  if (!_.isObject(value)) {
-    return value;
-  }
-  const entries = Object.entries(value)
-    .map(([key, val]) => `${indent(level + 1)}${key}: ${formatValue(val, level + 1)}`);
-  return `{\n${entries.join('\n')}\n${indent(level)}}`;
+const data = {
+  added: '+ ',
+  deleted: '- ',
+  space: '  ',
 };
 
-const stylishFormatter = (data1, data2, level = 1) => {
-  const keys = _.union(Object.keys(data1), Object.keys(data2)).sort();
+function getSpace(depth, symbol = '') {
+  const space = '    ';
+  return `${space.repeat(depth)}${symbol}`;
+}
 
-  const differences = keys.map((key) => {
-    if (!(key in data1)) {
-      return `${indent(level)}+ ${key}: ${formatValue(data2[key], level)}`;
+function stringify(value, depth) {
+  const iter = (currentValue, currentDepth) => {
+    if (!_.isObject(currentValue)) {
+      return String(currentValue);
     }
-    if (!(key in data2)) {
-      return `${indent(level)}- ${key}: ${formatValue(data1[key], level)}`;
-    }
-    if (_.isObject(data1[key]) && _.isObject(data2[key])) {
-      const childrenDiff = stylishFormatter(data1[key], data2[key], level + 1);
-      return `${indent(level)}${key}: {\n${childrenDiff}\n${indent(level)}}`;
-    }
-    if (data1[key] !== data2[key]) {
-      return `${indent(level)}- ${key}: ${formatValue(data1[key], level)}\n${indent(level)}+ ${key}: ${formatValue(data2[key], level)}`;
-    }
-    return `${indent(level)}  ${key}: ${formatValue(data1[key], level)}`;
-  });
+    const lines = Object.entries(currentValue).map(
+      ([key, val]) => `${getSpace(currentDepth + 1)}${key}: ${iter(val, currentDepth + 1)}`
+    );
+    return ['{', ...lines, `${getSpace(currentDepth)}}`].join('\n');
+  };
+  return iter(value, depth);
+}
 
-  return differences.join('\n');
-};
+export default function getStylish(tree) {
+  const iter = (node, depth) => {
+    const lines = node.map((item) => {
+      const { key, action, oldValue, newValue, children } = item;
+      switch (action) {
+        case 'deleted':
+          return `${getSpace(depth, data.deleted)}${key}: ${stringify(oldValue, depth)}`;
+        case 'added':
+          return `${getSpace(depth, data.added)}${key}: ${stringify(newValue, depth)}`;
+        case 'nested':
+          return `${getSpace(depth)}${key}: ${iter(children, depth + 1)}`;
+        case 'changed':
+          return [
+            `${getSpace(depth, data.deleted)}${key}: ${stringify(oldValue, depth)}`,
+            `${getSpace(depth, data.added)}${key}: ${stringify(newValue, depth)}`,
+          ].join('\n');
+        default:
+          return `${getSpace(depth)}${key}: ${stringify(oldValue, depth)}`;
+      }
+    });
+    return ['{', ...lines, `${getSpace(depth)}}`].join('\n');
+  };
+  return iter(tree, 0);
+}
 
-export default stylishFormatter;

@@ -1,5 +1,3 @@
-// src\diffBuilder.js
-
 import _ from 'lodash';
 import path from 'path';
 import fs from 'fs';
@@ -7,8 +5,7 @@ import fs from 'fs';
 export const getExtension = (filename) => filename.split('.').at(-1);
 
 export const readFile = (filePath) => {
-  const dirName = process.cwd(filePath);
-  const fullPath = path.resolve(dirName, filePath);
+  const fullPath = path.resolve(filePath);
   return fs.readFileSync(fullPath, 'utf-8');
 };
 

@@ -1,5 +1,3 @@
-// src/formatters/plain.js
-
 const plainFormatter = (diff) => {
   const formatValue = (value) => {
     if (value === null) return 'null';
