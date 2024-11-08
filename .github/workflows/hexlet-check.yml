@@ -8,42 +8,17 @@ name: hexlet-check
 on:
   push:
     branches:
-      - main
-  pull_request:
-    branches:
-      - main
+      - '**'
+    tags:
+      - '**'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - name: Hexlet project check
+        uses: hexlet/project-action@release
         with:
-          node-version: "14"
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Download Code Climate Test Reporter
-        run: curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-
-      - name: Set permissions for Code Climate Test Reporter
-        run: chmod +x ./cc-test-reporter
-
-      - name: Run Code Climate Test Reporter before-build
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-        run: ./cc-test-reporter before-build
-
-      - name: Run tests with coverage
-        run: make test-coverage
-
-      - name: Upload coverage to Code Climate
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-        run: ./cc-test-reporter after-build --exit-code $?
+          hexlet-id: ${{ secrets.HEXLET_ID }}
