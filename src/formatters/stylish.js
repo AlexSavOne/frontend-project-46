@@ -21,7 +21,7 @@ const stylish = (data) => {
         case 'changed':
           return [
             `${space(depth)}  - ${item.key}: ${stringify(item.oldValue, nextDepth)}`,
-            `${space(depth)}  + ${item.key}: ${stringify(item.newValue, nextDepth)}`
+            `${space(depth)}  + ${item.key}: ${stringify(item.newValue, nextDepth)}`,
           ].join('\n');
         case 'nested':
           return `${space(depth)}    ${item.key}: {\n${iter(item.children, nextDepth)}\n${space(nextDepth)}}`;
