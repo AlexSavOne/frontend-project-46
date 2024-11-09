@@ -1,39 +1,40 @@
-import _ from 'lodash';
+const space = (depth, replacer = ' ', spacesCount = 4) => replacer.repeat(depth * spacesCount);
 
-const indent = (depth) => ' '.repeat(depth * 4 - 2);
-
-const stringify = (value, depth) => {
-  if (!_.isObject(value)) return String(value);
-
-  const lines = Object.entries(value).map(
-    ([key, val]) => `${indent(depth + 1)}  ${key}: ${stringify(val, depth + 1)}`,
-  );
-  return ['{', ...lines, `${indent(depth)}  }`].join('\n');
+const stringify = (data, depth) => {
+  if (!(data instanceof Object)) {
+    return String(data);
+  }
+  const entries = Object.entries(data);
+  const str = entries.map(([key, value]) => `\n${space(depth + 1)}${key}: ${stringify(value, depth + 1)}`).join('');
+  return `{${str}\n${space(depth)}}`;
 };
 
-export default (tree) => {
+const stylish = (data) => {
   const iter = (node, depth) => {
-    const lines = node.map(({
-      key, action, oldValue, newValue, children,
-    }) => {
-      switch (action) {
-        case 'deleted':
-          return `${indent(depth)}- ${key}: ${stringify(oldValue, depth)}`;
+    const lines = node.map((item) => {
+      const nextDepth = depth + 1;
+      switch (item.action) {
         case 'added':
-          return `${indent(depth)}+ ${key}: ${stringify(newValue, depth)}`;
-        case 'nested':
-          return `${indent(depth)}  ${key}: ${iter(children, depth + 1)}`;
+          return `${space(depth)}  + ${item.key}: ${stringify(item.newValue, nextDepth)}`;
+        case 'deleted':
+          return `${space(depth)}  - ${item.key}: ${stringify(item.oldValue, nextDepth)}`;
         case 'changed':
           return [
-            `${indent(depth)}- ${key}: ${stringify(oldValue, depth)}`,
-            `${indent(depth)}+ ${key}: ${stringify(newValue, depth)}`,
+            `${space(depth)}  - ${item.key}: ${stringify(item.oldValue, nextDepth)}`,
+            `${space(depth)}  + ${item.key}: ${stringify(item.newValue, nextDepth)}`
           ].join('\n');
+        case 'nested':
+          return `${space(depth)}    ${item.key}: {\n${iter(item.children, nextDepth)}\n${space(nextDepth)}}`;
+        case 'unchanged':
+          return `${space(depth)}    ${item.key}: ${stringify(item.oldValue, nextDepth)}`;
         default:
-          return `${indent(depth)}  ${key}: ${stringify(oldValue, depth)}`;
+          throw new Error(`Unknown item type: '${item.action}'!`);
       }
     });
-    return ['{', ...lines, `${indent(depth)}  }`].join('\n');
+    return lines.join('\n');
   };
 
-  return iter(tree, 1).replace(/\s+$/, '');
+  return `{\n${iter(data, 0)}\n}`;
 };
+
+export default stylish;
