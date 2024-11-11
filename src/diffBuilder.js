@@ -1,15 +1,6 @@
 import _ from 'lodash';
-import path from 'path';
-import fs from 'fs';
 
-export const getExtension = (filename) => filename.split('.').slice(-1)[0];
-
-export const readFile = (filePath) => {
-  const fullPath = path.resolve(filePath);
-  return fs.readFileSync(fullPath, 'utf-8');
-};
-
-export const getDifferentObject = (obj1, obj2) => {
+const getDifferentObject = (obj1, obj2) => {
   const allKeys = _.sortBy(_.union(_.keys(obj1), _.keys(obj2))).map((key) => {
     const oldValue = obj1[key];
     const newValue = obj2[key];
@@ -31,3 +22,5 @@ export const getDifferentObject = (obj1, obj2) => {
   });
   return allKeys;
 };
+
+export default getDifferentObject;
